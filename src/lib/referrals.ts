@@ -150,6 +150,8 @@ export async function approveReferralReward(referralId: string) {
         where: { id: referralId },
         data: {
           status: "COMPLETED",
+          paidOut: true,
+          paidOutAt: now,
           updatedAt: now,
         },
       });

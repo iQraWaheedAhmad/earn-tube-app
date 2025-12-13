@@ -48,47 +48,6 @@ export async function GET(request: Request) {
 
     const userId = decodedToken.userId;
 
-    // ---- Balance sync from completed referrals (fixes "earnings show but balance is 0") ----
-    // We treat COMPLETED referral rewards as the source of truth for referral earnings.
-    // If, for any reason, those rewards weren't credited to `users.balance` (e.g. manual DB status change),
-    // we top-up the balance to match: (sum of completed referral rewards) - (sum of all withdrawals amounts).
-    // This is idempotent and only ever increments when balance is behind.
-    try {
-      const [user, referralAgg, withdrawalAgg] = await Promise.all([
-        prisma.user.findUnique({
-          where: { id: userId },
-          select: { balance: true },
-        }),
-        prisma.referral.aggregate({
-          where: { referrerId: userId, status: "COMPLETED" },
-          _sum: { rewardAmount: true },
-        }),
-        prisma.withdrawal.aggregate({
-          where: { userId },
-          _sum: { amount: true },
-        }),
-      ]);
-
-      const currentBalance = user?.balance ?? 0;
-      const completedReferralEarnings = referralAgg._sum.rewardAmount ?? 0;
-      const totalWithdrawals = withdrawalAgg._sum.amount ?? 0;
-      const expectedBalanceFromReferrals =
-        completedReferralEarnings - totalWithdrawals;
-
-      // Only top-up if user is behind expected referral-derived balance.
-      const epsilon = 0.0001;
-      if (expectedBalanceFromReferrals > currentBalance + epsilon) {
-        const incrementBy = expectedBalanceFromReferrals - currentBalance;
-        await prisma.user.update({
-          where: { id: userId },
-          data: { balance: { increment: incrementBy } },
-        });
-      }
-    } catch (syncErr) {
-      // Don't fail stats endpoint if sync fails; just return stats.
-      console.error("Referral balance sync failed:", syncErr);
-    }
-
     // Get referral stats
     const stats = await getReferralStats(userId);
 
