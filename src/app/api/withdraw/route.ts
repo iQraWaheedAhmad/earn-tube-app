@@ -5,6 +5,7 @@ import { verifyToken } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  const MIN_WITHDRAW_AMOUNT = 10;
   const headers = new Headers();
   headers.set("Content-Type", "application/json");
   headers.set("Access-Control-Allow-Origin", "*");
@@ -56,6 +57,16 @@ export async function POST(request: Request) {
       );
     }
 
+    if (amountNum < MIN_WITHDRAW_AMOUNT) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Minimum withdrawal amount is $${MIN_WITHDRAW_AMOUNT}.`,
+        },
+        { status: 400, headers }
+      );
+    }
+
     // Fetch userNo once (used for storing in withdrawals table for easier reporting).
     const userRecord = await prisma.user.findUnique({
       where: { id: userId },
@@ -73,6 +84,10 @@ export async function POST(request: Request) {
       if (!user) {
         // Throwing forces the transaction to rollback.
         throw new Error("USER_NOT_FOUND");
+      }
+
+      if ((user.balance ?? 0) < MIN_WITHDRAW_AMOUNT) {
+        throw new Error("MIN_BALANCE_REQUIRED");
       }
 
       // Only decrement if balance is sufficient.
@@ -121,6 +136,15 @@ export async function POST(request: Request) {
         return NextResponse.json(
           { success: false, error: "User not found" },
           { status: 404, headers }
+        );
+      }
+      if (error.message === "MIN_BALANCE_REQUIRED") {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Minimum balance required to withdraw is $${MIN_WITHDRAW_AMOUNT}.`,
+          },
+          { status: 400, headers }
         );
       }
       if (error.message === "INSUFFICIENT_BALANCE") {

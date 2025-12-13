@@ -7,11 +7,10 @@ import { useUser } from "@/hooks/useUser";
 import { Footer } from "@/components/Footer";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 
-const assets = [
-  { label: "Tether USD (USDT)", value: "USDT" },
-];
+const assets = [{ label: "Tether USD (USDT)", value: "USDT" }];
 
 function WithdrawPage() {
+  const MIN_WITHDRAW_AMOUNT = 10;
   const { depositStatus, loading: depositStatusLoading } = useDepositStatus();
   const { user, loading: userLoading, refetchUser } = useUser();
   const [activeTab, setActiveTab] = useState("withdraw");
@@ -67,7 +66,28 @@ function WithdrawPage() {
     // Validate amount is a number > 0
     const amountNum = Number(amount);
     if (!asset || !address || !amount || isNaN(amountNum) || amountNum <= 0) {
-      setMessage({ type: "error", text: "Enter a valid amount greater than zero." });
+      setMessage({
+        type: "error",
+        text: "Enter a valid amount greater than zero.",
+      });
+      return;
+    }
+    if ((user?.balance || 0) < MIN_WITHDRAW_AMOUNT) {
+      setMessage({
+        type: "error",
+        text: `Minimum balance required to withdraw is $${MIN_WITHDRAW_AMOUNT}.`,
+      });
+      return;
+    }
+    if (amountNum < MIN_WITHDRAW_AMOUNT) {
+      setMessage({
+        type: "error",
+        text: `Minimum withdrawal amount is $${MIN_WITHDRAW_AMOUNT}.`,
+      });
+      return;
+    }
+    if (amountNum > (user?.balance || 0)) {
+      setMessage({ type: "error", text: "Amount exceeds available balance" });
       return;
     }
     setIsLoading(true);
@@ -92,7 +112,10 @@ function WithdrawPage() {
         setAddress("");
         setAmount("");
       } else {
-        setMessage({ type: "error", text: result.error || "Failed to submit withdrawal." });
+        setMessage({
+          type: "error",
+          text: result.error || "Failed to submit withdrawal.",
+        });
       }
     } catch (err) {
       setMessage({ type: "error", text: "Network error. Please try again." });
@@ -120,7 +143,9 @@ function WithdrawPage() {
         <Navigation />
         <main className="flex-1 flex items-center justify-center bg-gradient-to-b from-card to-background px-5">
           <div className="max-w-lg mx-auto bg-card rounded-2xl shadow-xl border border-border p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4 text-foreground">Deposit Required</h1>
+            <h1 className="text-2xl font-bold mb-4 text-foreground">
+              Deposit Required
+            </h1>
             <p className="mb-6 text-muted-foreground">
               You must complete a deposit before you can withdraw funds.
             </p>
@@ -179,10 +204,16 @@ function WithdrawPage() {
           )}
           <div className="min-h-[400px]">
             {activeTab === "withdraw" && (
-              <form onSubmit={handleSubmit} className="bg-card rounded-2xl shadow-xl border border-border p-8 max-w-xl mx-auto">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-card rounded-2xl shadow-xl border border-border p-8 max-w-xl mx-auto"
+              >
                 <div className="space-y-6">
                   <div>
-                    <label htmlFor="asset" className="block text-sm font-medium text-foreground mb-2">
+                    <label
+                      htmlFor="asset"
+                      className="block text-sm font-medium text-foreground mb-2"
+                    >
                       Select Asset
                     </label>
                     <select
@@ -192,12 +223,17 @@ function WithdrawPage() {
                       className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                       {assets.map((a) => (
-                        <option value={a.value} key={a.value}>{a.label}</option>
+                        <option value={a.value} key={a.value}>
+                          {a.label}
+                        </option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-foreground mb-2"
+                    >
                       Recipient Address
                     </label>
                     <input
@@ -212,11 +248,14 @@ function WithdrawPage() {
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <label htmlFor="amount" className="block text-sm font-medium text-foreground">
+                      <label
+                        htmlFor="amount"
+                        className="block text-sm font-medium text-foreground"
+                      >
                         Amount to Withdraw
                       </label>
                       <div className="text-sm font-medium text-green-600">
-                        Balance: ${user?.balance?.toFixed(2) || '0.00'}
+                        Balance: ${user?.balance?.toFixed(2) || "0.00"}
                       </div>
                     </div>
                     <input
@@ -230,22 +269,50 @@ function WithdrawPage() {
                         setAmount(v);
                       }}
                       onKeyDown={(e) => {
-                        if (["-", "+", ".", "e", "0"].includes(e.key) && amount.length === 0) e.preventDefault();
+                        if (
+                          ["-", "+", ".", "e", "0"].includes(e.key) &&
+                          amount.length === 0
+                        )
+                          e.preventDefault();
                       }}
-                      min={1}
+                      min={MIN_WITHDRAW_AMOUNT}
                       max={user?.balance || 0}
-                      placeholder={`Enter amount (max: $${user?.balance?.toFixed(2) || '0.00'})`}
+                      placeholder={`Min $${MIN_WITHDRAW_AMOUNT} (max: $${
+                        user?.balance?.toFixed(2) || "0.00"
+                      })`}
                       className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
                     />
+                    {(user?.balance || 0) < MIN_WITHDRAW_AMOUNT && (
+                      <p className="text-yellow-600 text-sm mt-2">
+                        Minimum balance required to withdraw is $
+                        {MIN_WITHDRAW_AMOUNT}. Please earn more before
+                        requesting a withdrawal.
+                      </p>
+                    )}
+                    {amount &&
+                      parseFloat(amount) > 0 &&
+                      parseFloat(amount) < MIN_WITHDRAW_AMOUNT && (
+                        <p className="text-red-500 text-sm mt-1">
+                          Minimum withdrawal amount is ${MIN_WITHDRAW_AMOUNT}
+                        </p>
+                      )}
                     {amount && parseFloat(amount) > (user?.balance || 0) && (
-                      <p className="text-red-500 text-sm mt-1">Amount exceeds available balance</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        Amount exceeds available balance
+                      </p>
                     )}
                   </div>
                   <div className="flex justify-center mt-8">
                     <button
                       type="submit"
-                      disabled={isLoading}
+                      disabled={
+                        isLoading ||
+                        (user?.balance || 0) < MIN_WITHDRAW_AMOUNT ||
+                        !amount ||
+                        Number(amount) < MIN_WITHDRAW_AMOUNT ||
+                        Number(amount) > (user?.balance || 0)
+                      }
                       className="hero-gradient text-white font-bold py-3 px-8 rounded-lg shadow-lg flex items-center transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
                       {isLoading ? (
@@ -262,199 +329,232 @@ function WithdrawPage() {
               </form>
             )}
             {activeTab === "history" && (
-            <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
-              <div className="flex flex-wrap justify-center mb-8 border-b border-border">
-                <button
-                  onClick={() => setHistoryTab("total")}
-                  className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-                    historyTab === "total"
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  }`}
-                >
-                  Total Withdraw
-                </button>
-                <button
-                  onClick={() => setHistoryTab("pending")}
-                  className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-                    historyTab === "pending"
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  }`}
-                >
-                  Pending
-                </button>
-                <button
-                  onClick={() => setHistoryTab("completed")}
-                  className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-                    historyTab === "completed"
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  }`}
-                >
-                  Completed
-                </button>
-                <button
-                  onClick={() => setHistoryTab("rejected")}
-                  className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-                    historyTab === "rejected"
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  }`}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="min-h-[200px]">
-                {/* TODO: Render withdrawals by status */}
-                {historyLoading ? (
-                  <div className="flex justify-center items-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : withdrawalHistory ? (
-                  historyTab === "total" ? (
-                    <div className="text-center py-8">
-                      <div className="mb-6">
-                        <p className="text-4xl font-bold text-primary mb-2">
-                          ${withdrawalHistory.statistics.totalAmount?.toFixed(2) || 0}
-                        </p>
-                        <p className="text-muted-foreground">Total Withdrawn Amount</p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                        <div className="bg-muted rounded-lg p-4">
-                          <p className="text-2xl font-semibold text-foreground">
-                            {withdrawalHistory.statistics.totalWithdrawals}
-                          </p>
-                          <p className="text-sm text-muted-foreground">Total Withdrawals</p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-4">
-                          <p className="text-2xl font-semibold text-green-500">
-                            {withdrawalHistory.statistics.completedWithdrawals}
-                          </p>
-                          <p className="text-sm text-muted-foreground">Completed</p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-4">
-                          <p className="text-2xl font-semibold text-yellow-500">
-                            {withdrawalHistory.statistics.pendingWithdrawals}
-                          </p>
-                          <p className="text-sm text-muted-foreground">Pending</p>
-                        </div>
-                      </div>
+              <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
+                <div className="flex flex-wrap justify-center mb-8 border-b border-border">
+                  <button
+                    onClick={() => setHistoryTab("total")}
+                    className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
+                      historyTab === "total"
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    }`}
+                  >
+                    Total Withdraw
+                  </button>
+                  <button
+                    onClick={() => setHistoryTab("pending")}
+                    className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
+                      historyTab === "pending"
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    }`}
+                  >
+                    Pending
+                  </button>
+                  <button
+                    onClick={() => setHistoryTab("completed")}
+                    className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
+                      historyTab === "completed"
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    }`}
+                  >
+                    Completed
+                  </button>
+                  <button
+                    onClick={() => setHistoryTab("rejected")}
+                    className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
+                      historyTab === "rejected"
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    }`}
+                  >
+                    Rejected
+                  </button>
+                </div>
+                <div className="min-h-[200px]">
+                  {/* TODO: Render withdrawals by status */}
+                  {historyLoading ? (
+                    <div className="flex justify-center items-center py-12">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                     </div>
-                  ) : historyTab === "pending" ? (
-                    withdrawalHistory.pending.length > 0 ? (
-                      <div className="space-y-4">
-                        {withdrawalHistory.pending.map((w) => (
-                          <div key={w.id} className="bg-muted/50 rounded-lg p-4 border-l-4 border-yellow-500">
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <p className="font-semibold text-foreground">
-                                  ${w.amount} - {w.asset}
-                                </p>
-                                <p className="text-sm text-muted-foreground break-all">{w.address}</p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {new Date(w.createdAt).toLocaleString()}
-                                </p>
-                              </div>
-                              <span className="px-3 py-1 bg-yellow-500/20 text-yellow-500 rounded-full text-sm font-medium ml-4">
-                                Pending
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        No pending withdrawals found.
-                      </div>
-                    )
-                  ) : historyTab === "completed" ? (
-                    withdrawalHistory.completed.length > 0 ? (
-                      <div className="space-y-4">
-                        {withdrawalHistory.completed.map((w) => (
-                          <div key={w.id} className="bg-muted/50 rounded-lg p-4 border-l-4 border-green-500">
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <p className="font-semibold text-foreground">
-                                  ${w.amount} - {w.asset}
-                                </p>
-                                <p className="text-sm text-muted-foreground break-all">{w.address}</p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {new Date(w.createdAt).toLocaleString()}
-                                </p>
-                              </div>
-                              <span className="px-3 py-1 bg-green-500/20 text-green-500 rounded-full text-sm font-medium ml-4">
-                                Completed
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        No completed withdrawals found.
-                      </div>
-                    )
-                  ) : historyTab === "rejected" ? (
-                    withdrawalHistory.rejected.length > 0 ? (
-                      <div className="space-y-4">
-                        {withdrawalHistory.rejected.map((w) => (
-                          <div key={w.id} className="bg-muted/50 rounded-lg p-4 border-l-4 border-red-500">
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <p className="font-semibold text-foreground">
-                                  ${w.amount} - {w.asset}
-                                </p>
-                                <p className="text-sm text-muted-foreground break-all">{w.address}</p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {new Date(w.createdAt).toLocaleString()}
-                                </p>
-                              </div>
-                              <span className="px-3 py-1 bg-red-500/20 text-red-500 rounded-full text-sm font-medium ml-4">
-                                Rejected
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                        <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                          <p className="text-red-500 text-center font-medium">
-                            If your withdrawal was rejected, please contact our support team at:
+                  ) : withdrawalHistory ? (
+                    historyTab === "total" ? (
+                      <div className="text-center py-8">
+                        <div className="mb-6">
+                          <p className="text-4xl font-bold text-primary mb-2">
+                            $
+                            {withdrawalHistory.statistics.totalAmount?.toFixed(
+                              2
+                            ) || 0}
                           </p>
-                          <p className="text-red-500 text-center font-semibold mt-2">
-                            support@earntube.com
-                          </p>
-                          <p className="text-red-500 text-center text-sm mt-2">
-                            We'll help you resolve any issues with your withdrawal.
+                          <p className="text-muted-foreground">
+                            Total Withdrawn Amount
                           </p>
                         </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                          <div className="bg-muted rounded-lg p-4">
+                            <p className="text-2xl font-semibold text-foreground">
+                              {withdrawalHistory.statistics.totalWithdrawals}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Total Withdrawals
+                            </p>
+                          </div>
+                          <div className="bg-muted rounded-lg p-4">
+                            <p className="text-2xl font-semibold text-green-500">
+                              {
+                                withdrawalHistory.statistics
+                                  .completedWithdrawals
+                              }
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Completed
+                            </p>
+                          </div>
+                          <div className="bg-muted rounded-lg p-4">
+                            <p className="text-2xl font-semibold text-yellow-500">
+                              {withdrawalHistory.statistics.pendingWithdrawals}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Pending
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    ) : (
-                      <>
+                    ) : historyTab === "pending" ? (
+                      withdrawalHistory.pending.length > 0 ? (
+                        <div className="space-y-4">
+                          {withdrawalHistory.pending.map((w) => (
+                            <div
+                              key={w.id}
+                              className="bg-muted/50 rounded-lg p-4 border-l-4 border-yellow-500"
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <p className="font-semibold text-foreground">
+                                    ${w.amount} - {w.asset}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground break-all">
+                                    {w.address}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {new Date(w.createdAt).toLocaleString()}
+                                  </p>
+                                </div>
+                                <span className="px-3 py-1 bg-yellow-500/20 text-yellow-500 rounded-full text-sm font-medium ml-4">
+                                  Pending
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
                         <div className="text-center py-8 text-muted-foreground">
-                          No rejected withdrawals found.
+                          No pending withdrawals found.
                         </div>
-                        <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                          <p className="text-red-500 text-center font-medium">
-                            If your withdrawal was rejected, please contact our support team at:
-                          </p>
-                          <p className="text-red-500 text-center font-semibold mt-2">
-                            support@earntube.com
-                          </p>
-                          <p className="text-red-500 text-center text-sm mt-2">
-                            We'll help you resolve any issues with your withdrawal.
-                          </p>
+                      )
+                    ) : historyTab === "completed" ? (
+                      withdrawalHistory.completed.length > 0 ? (
+                        <div className="space-y-4">
+                          {withdrawalHistory.completed.map((w) => (
+                            <div
+                              key={w.id}
+                              className="bg-muted/50 rounded-lg p-4 border-l-4 border-green-500"
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <p className="font-semibold text-foreground">
+                                    ${w.amount} - {w.asset}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground break-all">
+                                    {w.address}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {new Date(w.createdAt).toLocaleString()}
+                                  </p>
+                                </div>
+                                <span className="px-3 py-1 bg-green-500/20 text-green-500 rounded-full text-sm font-medium ml-4">
+                                  Completed
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      </>
-                    )
-                  ) : null
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No withdrawal history available.
-                  </div>
-                )}
+                      ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No completed withdrawals found.
+                        </div>
+                      )
+                    ) : historyTab === "rejected" ? (
+                      withdrawalHistory.rejected.length > 0 ? (
+                        <div className="space-y-4">
+                          {withdrawalHistory.rejected.map((w) => (
+                            <div
+                              key={w.id}
+                              className="bg-muted/50 rounded-lg p-4 border-l-4 border-red-500"
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <p className="font-semibold text-foreground">
+                                    ${w.amount} - {w.asset}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground break-all">
+                                    {w.address}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {new Date(w.createdAt).toLocaleString()}
+                                  </p>
+                                </div>
+                                <span className="px-3 py-1 bg-red-500/20 text-red-500 rounded-full text-sm font-medium ml-4">
+                                  Rejected
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                          <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                            <p className="text-red-500 text-center font-medium">
+                              If your withdrawal was rejected, please contact
+                              our support team at:
+                            </p>
+                            <p className="text-red-500 text-center font-semibold mt-2">
+                              support@earntube.com
+                            </p>
+                            <p className="text-red-500 text-center text-sm mt-2">
+                              We'll help you resolve any issues with your
+                              withdrawal.
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="text-center py-8 text-muted-foreground">
+                            No rejected withdrawals found.
+                          </div>
+                          <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                            <p className="text-red-500 text-center font-medium">
+                              If your withdrawal was rejected, please contact
+                              our support team at:
+                            </p>
+                            <p className="text-red-500 text-center font-semibold mt-2">
+                              support@earntube.com
+                            </p>
+                            <p className="text-red-500 text-center text-sm mt-2">
+                              We'll help you resolve any issues with your
+                              withdrawal.
+                            </p>
+                          </div>
+                        </>
+                      )
+                    ) : null
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No withdrawal history available.
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
           </div>
         </div>
       </main>
