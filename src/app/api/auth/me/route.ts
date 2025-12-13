@@ -45,28 +45,44 @@ export async function GET(request: Request) {
 
     const userId = decodedToken.userId;
 
-    // Self-heal: if any referral rows were marked COMPLETED without payout,
-    // credit them once and mark them paidOut so balance never "misses" referral rewards.
+    // Self-heal: keep `users.balance` consistent with what the system has recorded.
+    // We do NOT overwrite balance; we only ever top-up when balance is behind.
+    // Expected = (sum of paid task rounds) + (sum of completed referral rewards) - (sum of withdrawals)
+    // Note: withdrawals decrement balance immediately when created, so we count ALL withdrawals.
     await prisma.$transaction(async (tx) => {
-      const unpaid = await tx.referral.findMany({
-        where: { referrerId: userId, status: "COMPLETED", paidOut: false },
-        select: { id: true, rewardAmount: true },
-      });
+      const [u, referralAgg, taskAgg, withdrawalAgg] = await Promise.all([
+        tx.user.findUnique({
+          where: { id: userId },
+          select: { balance: true },
+        }),
+        tx.referral.aggregate({
+          where: { referrerId: userId, status: "COMPLETED" },
+          _sum: { rewardAmount: true },
+        }),
+        tx.dailyTaskRound.aggregate({
+          where: { userId, paidOut: true },
+          _sum: { rewardAmount: true },
+        }),
+        tx.withdrawal.aggregate({
+          where: { userId },
+          _sum: { amount: true },
+        }),
+      ]);
 
-      if (unpaid.length === 0) return;
+      const currentBalance = u?.balance ?? 0;
+      const referralEarned = referralAgg._sum.rewardAmount ?? 0;
+      const taskEarned = taskAgg._sum.rewardAmount ?? 0;
+      const withdrawn = withdrawalAgg._sum.amount ?? 0;
 
-      const total = unpaid.reduce((sum, r) => sum + (r.rewardAmount || 0), 0);
-      const now = new Date();
+      const expected = referralEarned + taskEarned - withdrawn;
+      const epsilon = 0.0001;
 
-      await tx.user.update({
-        where: { id: userId },
-        data: { balance: { increment: total } },
-      });
-
-      await tx.referral.updateMany({
-        where: { id: { in: unpaid.map((r) => r.id) } },
-        data: { paidOut: true, paidOutAt: now, updatedAt: now },
-      });
+      if (expected > currentBalance + epsilon) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { balance: { increment: expected - currentBalance } },
+        });
+      }
     });
 
     // Find user (after potential self-heal)
