@@ -24,6 +24,7 @@ export const useUser = () => {
       }
 
       const response = await fetch("/api/auth/me", {
+        cache: "no-store",
         headers: {
           Authorization: `Bearer ${token}`,
         },
