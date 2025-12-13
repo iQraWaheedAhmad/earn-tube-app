@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { sign } from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   const headers = new Headers();
