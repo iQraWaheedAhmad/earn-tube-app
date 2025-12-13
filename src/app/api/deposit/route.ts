@@ -87,7 +87,8 @@ export async function POST(request: Request) {
       );
     }
 
-    let paymentProofPath = null;
+    let paymentProofPath: string | null = null;
+    const isVercel = Boolean(process.env.VERCEL);
 
     // Handle file upload if provided
     if (paymentProof) {
@@ -100,30 +101,49 @@ export async function POST(request: Request) {
           );
         }
 
-        // Generate unique filename
-        const timestamp = Date.now();
-        const fileExtension = paymentProof.name.split(".").pop();
-        const fileName = `deposit_${userId}_${timestamp}.${fileExtension}`;
-
-        // Save file to public/uploads directory
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        const filePath = path.join(uploadDir, fileName);
-
-        // Ensure upload directory exists
-        if (!existsSync(uploadDir)) {
-          mkdirSync(uploadDir, { recursive: true });
-        }
-
-        // Write file
         const bytes = await paymentProof.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await writeFile(filePath, buffer);
 
-        // Store the full URL for payment proof
-        const protocol = request.headers.get("x-forwarded-proto") || "http";
-        const host = request.headers.get("host") || "localhost:3000";
-        paymentProofPath = `${protocol}://${host}/api/uploads/${fileName}`;
-        console.log("File saved successfully:", paymentProofPath);
+        // On Vercel serverless, the filesystem (project dir) is read-only.
+        // Store a data URL directly (works with <img src="...">) to avoid disk writes.
+        if (isVercel) {
+          const MAX_BYTES = 1_500_000; // ~1.5MB to avoid huge DB rows / responses
+          if (buffer.byteLength > MAX_BYTES) {
+            return NextResponse.json(
+              {
+                success: false,
+                error: "Payment proof image is too large. Please upload a smaller image.",
+              },
+              { status: 413, headers }
+            );
+          }
+
+          const base64 = buffer.toString("base64");
+          paymentProofPath = `data:${paymentProof.type};base64,${base64}`;
+          console.log("Stored payment proof as data URL (Vercel). Size:", buffer.byteLength);
+        } else {
+          // Generate unique filename
+          const timestamp = Date.now();
+          const fileExtension = paymentProof.name.split(".").pop();
+          const fileName = `deposit_${userId}_${timestamp}.${fileExtension}`;
+
+          // Save file to public/uploads directory (local/dev)
+          const uploadDir = path.join(process.cwd(), "public", "uploads");
+          const filePath = path.join(uploadDir, fileName);
+
+          // Ensure upload directory exists
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+
+          await writeFile(filePath, buffer);
+
+          // Store the full URL for payment proof
+          const protocol = request.headers.get("x-forwarded-proto") || "http";
+          const host = request.headers.get("host") || "localhost:3000";
+          paymentProofPath = `${protocol}://${host}/api/uploads/${fileName}`;
+          console.log("File saved successfully:", paymentProofPath);
+        }
       } catch (fileError) {
         console.error("File upload error:", fileError);
         return NextResponse.json(
