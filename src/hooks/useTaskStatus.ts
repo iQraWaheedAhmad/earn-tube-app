@@ -24,6 +24,13 @@ export const useTaskStatus = () => {
 
   const fetchStatus = async () => {
     try {
+      const role = localStorage.getItem("role");
+      if (role === "admin") {
+        // Admin tokens don't have userId; don't call user task APIs.
+        setData(null);
+        setLoading(false);
+        return;
+      }
       const token = localStorage.getItem("token");
       if (!token) {
         setData(null);

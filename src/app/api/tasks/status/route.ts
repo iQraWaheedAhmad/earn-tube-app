@@ -45,7 +45,13 @@ export async function GET(request: Request) {
       );
     }
 
-    const userId = decoded.userId;
+    const userId = (decoded as { userId?: string }).userId;
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "User token required" },
+        { status: 401, headers }
+      );
+    }
     const now = new Date();
 
     // Use user's local midnight based on browser timezone offset (minutes).

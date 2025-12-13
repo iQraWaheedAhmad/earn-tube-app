@@ -26,10 +26,26 @@ export async function POST(request: Request) {
     // Prefer admin user from DB (seeded), fallback to env credentials
     const envEmail = process.env.ADMIN_EMAIL?.trim();
     const envPassword = process.env.ADMIN_PASSWORD?.trim();
+    const inputEmailNorm = trimmedEmail?.toLowerCase();
+    const envEmailNorm = envEmail?.toLowerCase();
 
-    const adminUser = trimmedEmail
-      ? await prisma.user.findUnique({ where: { email: trimmedEmail } })
-      : null;
+    // DB lookup is optional — on local/dev you might not have DATABASE_URL configured.
+    // If Prisma throws, we still want to allow env-based admin login.
+    let adminUser: { password: string } | null = null;
+    if (trimmedEmail) {
+      try {
+        adminUser = await prisma.user.findUnique({
+          where: { email: trimmedEmail },
+          select: { password: true },
+        });
+      } catch (dbErr) {
+        console.error(
+          "Admin login DB lookup failed (falling back to env):",
+          dbErr
+        );
+        adminUser = null;
+      }
+    }
 
     let isValid = false;
 
@@ -44,16 +60,30 @@ export async function POST(request: Request) {
       trimmedEmail &&
       trimmedPassword
     ) {
-      isValid = trimmedEmail === envEmail && trimmedPassword === envPassword;
+      // Email is case-insensitive; password is exact.
+      isValid =
+        inputEmailNorm === envEmailNorm && trimmedPassword === envPassword;
     }
 
     if (!isValid) {
+      console.error("Admin login mismatch diagnostics:", {
+        hasEnvCreds: Boolean(envEmail && envPassword),
+        envEmailPresent: Boolean(envEmail),
+        inputEmailPresent: Boolean(trimmedEmail),
+        envEmailMatches: Boolean(
+          envEmailNorm && inputEmailNorm && envEmailNorm === inputEmailNorm
+        ),
+        triedDb: Boolean(trimmedEmail),
+        dbUserFound: Boolean(adminUser),
+      });
       console.error("Admin login failed - credentials mismatch");
       return NextResponse.json(
         {
           success: false,
           error:
-            "Invalid admin credentials. Please check your email and password.",
+            envEmail && envPassword
+              ? "Invalid admin credentials. Please check your email and password."
+              : "Admin credentials are not configured. Set ADMIN_EMAIL and ADMIN_PASSWORD (or configure DATABASE_URL with a seeded admin user).",
         },
         { status: 401, headers }
       );
