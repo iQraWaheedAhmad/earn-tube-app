@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
@@ -10,6 +9,8 @@ import { ArrowUpRight, Shield } from "lucide-react";
 
 const AdminDashboard = () => {
   const router = useRouter();
+  const adminPanelUrl =
+    process.env.NEXT_PUBLIC_ADMIN_PANEL_URL || "https://railway.app";
 
   useEffect(() => {
     // Simple client-side guard (admin auth is currently stored in localStorage)
@@ -44,9 +45,14 @@ const AdminDashboard = () => {
 
             <div className="flex gap-3">
               <Button asChild className="hero-gradient">
-                <Link href="/admin/panel" className="flex items-center gap-2">
+                <a
+                  href={adminPanelUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
                   Admin Panel <ArrowUpRight className="w-4 h-4" />
-                </Link>
+                </a>
               </Button>
             </div>
           </div>
