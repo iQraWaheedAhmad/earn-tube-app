@@ -124,6 +124,138 @@ export const Navigation = () => {
             </span>
           </Link>
 
+          {/* Mobile: Deposit, Withdraw, and Profile (outside menu) */}
+          <div className="md:hidden flex items-center">
+            {isLoggedIn && !statusLoading && (
+              <>
+                {/* Deposit and Withdraw buttons grouped together */}
+                <div className="flex items-center gap-1">
+                  {depositStatus.hasRejectedDeposit ? (
+                    <button
+                      onClick={() => setIsRejectedModalOpen(true)}
+                      className="bg-red-500 text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    >
+                      <AlertCircle className="w-3 h-3" />
+                      <span className="hidden sm:inline">Rejected</span>
+                    </button>
+                  ) : depositStatus.status === "PENDING" ? (
+                    <Link
+                      href="/deposit"
+                      className="bg-yellow-500 text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    >
+                      <Wallet className="w-3 h-3" />
+                      <span className="hidden sm:inline">Pending</span>
+                    </Link>
+                  ) : depositStatus.status === "COMPLETED" ? (
+                    <Link
+                      href="/tasks"
+                      className="hero-gradient text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    >
+                      <Play className="w-3 h-3" />
+                      <span className="hidden sm:inline">Tasks</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/deposit"
+                      className="hero-gradient text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    >
+                      <Wallet className="w-3 h-3" />
+                      <span className="hidden sm:inline">Deposit</span>
+                    </Link>
+                  )}
+                  {/* Always show Withdraw button when logged in */}
+                  <Link
+                    href="/withdraw"
+                    className="bg-blue-600 text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    style={{
+                      background: "linear-gradient(90deg, #1e90ff, #00d4ff)",
+                    }}
+                  >
+                    <ArrowUpRight className="w-3 h-3" />
+                    <span className="hidden sm:inline">Withdraw</span>
+                  </Link>
+                </div>
+                {/* Profile Avatar - closer to menu */}
+                <div className="ml-2">
+                  {isAdmin ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Avatar className="h-8 w-8 text-xs hero-gradient rounded-full">
+                            <AvatarFallback className="text-white font-bold bg-transparent">
+                              {name?.charAt(0)?.toUpperCase() || "A"}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <div className="px-3 pt-2 pb-2">
+                          <div className="font-semibold text-sm">
+                            {name || "Admin"}
+                          </div>
+                        </div>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={handleLogout}
+                          className="text-destructive"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" /> Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Avatar className="h-8 w-8 text-xs hero-gradient rounded-full">
+                            <AvatarFallback className="text-white font-bold bg-transparent">
+                              {name?.charAt(0)?.toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <div className="px-3 pt-2 pb-2">
+                          <div className="font-semibold text-sm">
+                            {name || "User"}
+                          </div>
+                          {email && (
+                            <div className="text-xs text-muted-foreground">
+                              {email}
+                            </div>
+                          )}
+                        </div>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/profile"
+                            className="flex items-center gap-2"
+                          >
+                            <Users className="h-4 w-4 mr-2" /> Refer Friends
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleLogout}
+                          className="text-destructive"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" /> Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <Link
@@ -313,7 +445,7 @@ export const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 ml-1"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X /> : <Menu />}
@@ -358,149 +490,42 @@ export const Navigation = () => {
             >
               Partners
             </Link>
-            {isLoggedIn && !statusLoading && (
-              <>
-                {depositStatus.hasRejectedDeposit ? (
-                  <button
-                    onClick={() => {
-                      setIsRejectedModalOpen(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                  >
-                    <AlertCircle className="w-4 h-4" />
-                    Deposit Rejected
-                  </button>
-                ) : depositStatus.status === "PENDING" ? (
-                  <Link
-                    href="/deposit"
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Wallet className="w-4 h-4" />
-                    Deposit Pending
-                  </Link>
-                ) : depositStatus.status === "COMPLETED" ? (
-                  <Link
-                    href="/tasks"
-                    className="hero-gradient text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Play className="w-4 h-4" />
-                    {taskStatus?.completedToday && taskStatus?.nextAvailableAt
-                      ? `Next Task in ${formatCountdown(
-                          new Date(taskStatus.nextAvailableAt).getTime() - nowMs
-                        )}`
-                      : "Start Task"}
-                  </Link>
-                ) : (
-                  <>
-                    <Link
-                      href="/deposit"
-                      className="hero-gradient text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Wallet className="w-4 h-4" />
-                      Deposit
-                    </Link>
-                    <Link
-                      href="/withdraw"
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 ml-0.5"
-                      style={{
-                        background: "linear-gradient(90deg, #1e90ff, #00d4ff)",
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Wallet className="w-4 h-4" />
-                      Withdraw
-                    </Link>
-                  </>
-                )}
-              </>
+            {/* Balance Display for Mobile Menu */}
+            {isLoggedIn && (
+              <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
+                <DollarSign className="w-4 h-4 text-green-500" />
+                <span className="text-sm font-semibold text-green-500">
+                  ${user?.balance?.toFixed(2) || "0.00"}
+                </span>
+              </div>
             )}
-            {/* Withdraw button is only visible if logged in */}
             <div className="flex flex-col gap-2 pt-2">
               {isAdmin ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      className="w-full flex items-center gap-2 justify-center"
-                    >
-                      <Shield className="w-4 h-4 mr-1" /> Admin
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <div className="px-3 pt-2 pb-2">
-                      <div className="font-semibold text-sm">
-                        {name || "Admin"}
-                      </div>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={handleLogout}
-                      className="text-destructive"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" /> Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Link
+                  href="/admin/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Button
+                    variant="secondary"
+                    className="w-full flex items-center gap-2 justify-center"
+                  >
+                    <Shield className="w-4 h-4 mr-1" /> Admin Dashboard
+                  </Button>
+                </Link>
               ) : isLoggedIn ? (
-                <div className="flex flex-col gap-3">
-                  {/* Balance Display */}
-                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
-                    <DollarSign className="w-4 h-4 text-green-500" />
-                    <span className="text-sm font-semibold text-green-500">
-                      ${user?.balance?.toFixed(2) || "0.00"}
-                    </span>
-                  </div>
-
-                  {/* Profile Dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full flex items-center gap-2 justify-center"
-                      >
-                        <Avatar className="h-7 w-7 text-xs hero-gradient rounded-full">
-                          <AvatarFallback className="text-white font-bold bg-transparent">
-                            {name?.charAt(0)?.toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="inline-block">
-                          {name || "Profile"}
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <div className="px-3 pt-2 pb-2">
-                        <div className="font-semibold text-sm">
-                          {name || "User"}
-                        </div>
-                        {email && (
-                          <div className="text-xs text-muted-foreground">
-                            {email}
-                          </div>
-                        )}
-                      </div>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-2"
-                        >
-                          <Users className="h-4 w-4 mr-2" /> Refer Friends
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={handleLogout}
-                        className="text-destructive"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" /> Logout
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block"
+                >
+                  <Button
+                    variant="ghost"
+                    className="w-full flex items-center gap-2 justify-center"
+                  >
+                    <User className="w-4 h-4" />
+                    View Profile
+                  </Button>
+                </Link>
               ) : (
                 <>
                   <Link

@@ -1,5 +1,6 @@
 "use client";
 import { Navigation } from "@/components/Navigation";
+import { UserOverview } from "@/components/UserOverview";
 import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
 import { Features } from "@/components/Features";
@@ -11,6 +12,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
+      <UserOverview />
       <Hero />
       <Stats />
       <Features />
