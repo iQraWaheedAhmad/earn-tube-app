@@ -11,7 +11,7 @@ const AdminDashboard = () => {
   const router = useRouter();
   const adminPanelUrl =
     process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ||
-    "https://directus-production-2ee7.up.railway.app/admin";
+    "https://directus-production-cf69.up.railway.app/admin";
 
   useEffect(() => {
     // Simple client-side guard (admin auth is currently stored in localStorage)

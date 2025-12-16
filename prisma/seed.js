@@ -5,9 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const adminEmail = (process.env.ADMIN_EMAIL || "admin@earntube.com").trim();
-  const adminPassword = (
-    process.env.ADMIN_PASSWORD || "pT9!r3*S8$wQ2@xA4yVf"
-  ).trim();
+  const adminPassword = (process.env.ADMIN_PASSWORD || "Imran1122").trim();
 
   if (!adminEmail || !adminPassword) {
     throw new Error(
