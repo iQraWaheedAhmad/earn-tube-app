@@ -443,6 +443,18 @@ export const Navigation = () => {
             )}
           </div>
 
+          {/* Mobile: Get Started Button (when not logged in) */}
+          {!isLoggedIn && (
+            <Link href="/register" className="md:hidden">
+              <Button
+                size="sm"
+                className="hero-gradient text-white text-xs px-3 py-1.5 h-8 mr-2"
+              >
+                Get Started
+              </Button>
+            </Link>
+          )}
+
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 ml-1"
@@ -490,15 +502,6 @@ export const Navigation = () => {
             >
               Partners
             </Link>
-            {/* Balance Display for Mobile Menu */}
-            {isLoggedIn && (
-              <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
-                <DollarSign className="w-4 h-4 text-green-500" />
-                <span className="text-sm font-semibold text-green-500">
-                  ${user?.balance?.toFixed(2) || "0.00"}
-                </span>
-              </div>
-            )}
             <div className="flex flex-col gap-2 pt-2">
               {isAdmin ? (
                 <Link

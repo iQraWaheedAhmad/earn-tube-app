@@ -10,6 +10,7 @@ import {
   Video,
   TrendingUp,
   Timer,
+  DollarSign,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
@@ -183,6 +184,23 @@ export const UserOverview = () => {
                 <p className="text-muted-foreground">
                   Track your active plan and daily task progress
                 </p>
+              </div>
+            </div>
+
+            {/* Mobile: Balance Display */}
+            <div className="md:hidden bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl p-4 border border-green-500/30 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Your Balance
+                  </p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    ${user?.balance?.toFixed(2) || "0.00"}
+                  </p>
+                </div>
               </div>
             </div>
 
