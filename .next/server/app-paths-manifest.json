@@ -1,3 +1,13 @@
 {
-  "/page": "app/page.js"
+  "/api/tasks/status/route": "app/api/tasks/status/route.js",
+  "/page": "app/page.js",
+  "/login/page": "app/login/page.js",
+  "/deposit/page": "app/deposit/page.js",
+  "/register/page": "app/register/page.js",
+  "/tasks/page": "app/tasks/page.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/deposit/history/route": "app/api/deposit/history/route.js",
+  "/api/tasks/step/route": "app/api/tasks/step/route.js",
+  "/profile/page": "app/profile/page.js",
+  "/api/referrals/stats/route": "app/api/referrals/stats/route.js"
 }
