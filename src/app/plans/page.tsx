@@ -12,7 +12,7 @@ const plans = [
   { priceUSD: 150, profitUSD: 4 },
   { priceUSD: 250, profitUSD: 5 },
 ];
-
+//this is plan pages
 export default function PlansPage() {
   return (
     <div className="min-h-screen flex flex-col">
