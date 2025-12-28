@@ -1,4 +1,4 @@
-// File: C:\Users\test\Downloads\earn-tube-app-main\earn-tube-app-main\src\app\page.tsx
+// File: F:\Sovanza\New folder\earn-web\earn-tube-app\src\app\page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

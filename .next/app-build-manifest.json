@@ -1,80 +1,207 @@
 {
   "pages": {
-<<<<<<< HEAD
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-=======
-    "/profile/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/profile/page.js"
->>>>>>> ccb9353 (Update the plan page and fix reward issue)
+    "/not-found": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/app/not-found-4d1b75e057c1102b.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/app/_not-found/page-3fb1e6d314c2d9fd.js"
     ],
     "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/layout.css",
-      "static/chunks/app/layout.js"
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/css/c63a36aa0bf92447.css",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/973-541ff9a1c4645247.js",
+      "static/chunks/app/layout-1429cf05400701d0.js"
     ],
-    "/not-found": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/not-found.js"
+    "/about/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/about/page-013f81138d276d7e.js"
     ],
-<<<<<<< HEAD
-=======
-    "/_not-found/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+    "/admin/dashboard/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/admin/dashboard/page-fcc81f699c6d5ded.js"
+    ],
+    "/admin/login/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/admin/login/page-736575424a420e9e.js"
+    ],
+    "/deposit/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/deposit/page-62edb6e0ce2c79ab.js"
+    ],
+    "/features/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/648-c01da1480ee41337.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/features/page-05d6ad00bb27da61.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/login/page-7ac8ef02c22708eb.js"
+    ],
+    "/forgot-password/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/forgot-password/page-d7510f490f13aa9e.js"
     ],
     "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/648-c01da1480ee41337.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/page-47d17dce8a782d57.js"
     ],
->>>>>>> ccb9353 (Update the plan page and fix reward issue)
-    "/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
+    "/partners/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/partners/page-ab577eb102dcdd07.js"
     ],
-<<<<<<< HEAD
-    "/deposit/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/deposit/page.js"
+    "/plans/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/plans/page-3a6adf336fe4ba3d.js"
     ],
-    "/register/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/register/page.js"
-    ],
-=======
->>>>>>> ccb9353 (Update the plan page and fix reward issue)
-    "/tasks/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/tasks/page.js"
-    ],
-<<<<<<< HEAD
     "/profile/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/profile/page.js"
-=======
-    "/register/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/register/page.js"
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/profile/page-c57333ae1f8876ac.js"
     ],
-    "/deposit/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/deposit/page.js"
->>>>>>> ccb9353 (Update the plan page and fix reward issue)
+    "/register/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/register/page-ca43108ba968da56.js"
+    ],
+    "/reset-password/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/776-6beb04dc146c67f5.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/reset-password/page-ddf70cfb6cb4e981.js"
+    ],
+    "/staking/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/staking/page-5748c83a7a907f94.js"
+    ],
+    "/tasks/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/648-c01da1480ee41337.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/tasks/page-c3af552006571184.js"
+    ],
+    "/testimonials/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/testimonials/page-249d287ad3996425.js"
+    ],
+    "/withdraw/page": [
+      "static/chunks/webpack-bebe7ef3e1558a04.js",
+      "static/chunks/fd9d1056-8444ca715ffd7b9c.js",
+      "static/chunks/23-40fc31f1c4ecb327.js",
+      "static/chunks/main-app-0585b6a80434a2a5.js",
+      "static/chunks/314-81d41eeba0df5f4c.js",
+      "static/chunks/605-a4a3ca4798ca15b1.js",
+      "static/chunks/135-c143eabfb29e41ef.js",
+      "static/chunks/app/withdraw/page-d7dd4cca47c4bdc2.js"
     ]
   }
 }
