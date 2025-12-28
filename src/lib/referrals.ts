@@ -1,5 +1,5 @@
 import prisma from "./prisma";
-import { getProfitForDepositAmount } from "./planRewards";
+import { getReferralProfitForDepositAmount } from "./planRewards";
 
 export async function processReferralReward(
   userId: string,
@@ -34,21 +34,8 @@ export async function processReferralReward(
       referredByName: user.referredByUser?.name,
     });
 
-    // Check if referral reward already exists
-    const existingReferral = await prisma.referral.findUnique({
-      where: { referredId: userId },
-    });
-
-    if (existingReferral) {
-      console.log(
-        "=== REFERRAL RECORD ALREADY EXISTS ===",
-        existingReferral.status
-      );
-      return existingReferral;
-    }
-
     // Find the plan that matches the deposit amount
-    const rewardAmount = getProfitForDepositAmount(depositAmount);
+    const rewardAmount = getReferralProfitForDepositAmount(depositAmount);
     if (rewardAmount == null) {
       console.log("=== NO MATCHING PLAN FOUND ===", depositAmount);
       return null;
@@ -65,14 +52,19 @@ export async function processReferralReward(
       planAmount: depositAmount,
     });
 
-    // Create referral record with PENDING status (no balance update yet)
-    // Note: Prisma Client types may lag schema until you run `prisma generate`.
+    // Create referral record with PENDING status (no balance update yet).
+    // Use upsert to avoid duplicate rows even under concurrent requests.
     const referralUnknown = await (
       prisma as unknown as {
-        referral: { create: (args: unknown) => Promise<unknown> };
+        referral: {
+          upsert: (args: unknown) => Promise<unknown>;
+        };
       }
-    ).referral.create({
-      data: {
+    ).referral.upsert({
+      where: { referredId: userId },
+      // If already exists, leave it untouched (idempotent).
+      update: {},
+      create: {
         referrerId,
         referrerNo,
         referredId: userId,
@@ -80,6 +72,7 @@ export async function processReferralReward(
         rewardAmount,
         planAmount: depositAmount,
         status: "PENDING",
+        paidOut: false,
       },
     });
 
@@ -128,26 +121,12 @@ export async function approveReferralReward(referralId: string) {
       rewardAmount: referral.rewardAmount,
     });
 
-    // Update referral status and add to balance in a transaction
+    // Update referral status and add to balance in a transaction with double-check
     const result = await prisma.$transaction(async (tx) => {
-      // Get current referrer balance before update
-      const currentReferrer = await tx.user.findUnique({
-        where: { id: referral.referrerId },
-        select: { balance: true },
-      });
-
-      console.log("=== CURRENT REFERRER BALANCE ===", {
-        referrerId: referral.referrerId,
-        currentBalance: currentReferrer?.balance || 0,
-        rewardAmount: referral.rewardAmount,
-        newBalance: (currentReferrer?.balance || 0) + referral.rewardAmount,
-      });
-
       const now = new Date();
-
-      // Mark referral completed
-      const updatedReferral = await tx.referral.update({
-        where: { id: referralId },
+      // Only update if status is still PENDING
+      const updated = await tx.referral.updateMany({
+        where: { id: referralId, status: "PENDING" },
         data: {
           status: "COMPLETED",
           paidOut: true,
@@ -155,27 +134,20 @@ export async function approveReferralReward(referralId: string) {
           updatedAt: now,
         },
       });
-
+      if (updated.count !== 1) {
+        // Already completed or not found, skip balance increment
+        return await tx.referral.findUnique({ where: { id: referralId } });
+      }
       // Add reward to referrer's balance
-      const balanceUpdate = await tx.user.update({
+      await tx.user.update({
         where: { id: referral.referrerId },
         data: {
           balance: {
             increment: referral.rewardAmount,
           },
         },
-        select: {
-          id: true,
-          balance: true,
-        },
       });
-
-      console.log("=== BALANCE UPDATE COMPLETED ===", {
-        referrerId: balanceUpdate.id,
-        updatedBalance: balanceUpdate.balance,
-      });
-
-      return updatedReferral;
+      return await tx.referral.findUnique({ where: { id: referralId } });
     });
 
     console.log("=== REFERRAL REWARD APPROVED SUCCESSFULLY ===", {

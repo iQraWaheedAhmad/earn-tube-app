@@ -130,7 +130,11 @@
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
+<<<<<<< HEAD
 /******/ 		__webpack_require__.h = () => ("538ff1ea541d688f")
+=======
+/******/ 		__webpack_require__.h = () => ("ae3fb44d0e7a5b76")
+>>>>>>> ccb9353 (Update the plan page and fix reward issue)
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

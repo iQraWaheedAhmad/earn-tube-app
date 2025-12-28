@@ -46,7 +46,6 @@ export async function GET(request: Request) {
     const userId = decodedToken.userId;
 
     // Self-heal: keep `users.balance` consistent with what the system has recorded.
-    // We do NOT overwrite balance; we only ever top-up when balance is behind.
     // Expected = (sum of paid task rounds) + (sum of completed referral rewards) - (sum of withdrawals)
     // Note: withdrawals decrement balance immediately when created, so we count ALL withdrawals.
     await prisma.$transaction(async (tx) => {
@@ -77,10 +76,10 @@ export async function GET(request: Request) {
       const expected = referralEarned + taskEarned - withdrawn;
       const epsilon = 0.0001;
 
-      if (expected > currentBalance + epsilon) {
+      if (Math.abs(expected - currentBalance) > epsilon) {
         await tx.user.update({
           where: { id: userId },
-          data: { balance: { increment: expected - currentBalance } },
+          data: { balance: expected },
         });
       }
     });

@@ -4,13 +4,13 @@ import Link from "next/link";
 import { Navigation } from "@/components/Navigation";
 
 const plans = [
-  { priceUSD: 15, profitUSD: 1 },
-  { priceUSD: 25, profitUSD: 1.50 },
-  { priceUSD: 35, profitUSD: 1.75 },
-  { priceUSD: 50, profitUSD: 2},
-  { priceUSD: 75, profitUSD: 2.50 },
-  { priceUSD: 150, profitUSD: 3},
-  { priceUSD: 250, profitUSD: 5 },
+  { priceUSD: 15, profitUSD: 1, referralProfitUSD: 3 },
+  { priceUSD: 25, profitUSD: 1.5, referralProfitUSD: 4 },
+  { priceUSD: 35, profitUSD: 1.75, referralProfitUSD: 5 },
+  { priceUSD: 50, profitUSD: 2, referralProfitUSD: 6 },
+  { priceUSD: 75, profitUSD: 3.75, referralProfitUSD: 7 },
+  { priceUSD: 150, profitUSD: 5, referralProfitUSD: 10 },
+  { priceUSD: 250, profitUSD: 8, referralProfitUSD: 20 },
 ];
 //this is plan pages
 export default function PlansPage() {

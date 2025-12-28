@@ -1,9 +1,16 @@
 {
   "pages": {
+<<<<<<< HEAD
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
+=======
+    "/profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/profile/page.js"
+>>>>>>> ccb9353 (Update the plan page and fix reward issue)
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,11 +23,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/not-found.js"
     ],
+<<<<<<< HEAD
+=======
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
+    ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
+>>>>>>> ccb9353 (Update the plan page and fix reward issue)
     "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
+<<<<<<< HEAD
     "/deposit/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -31,15 +52,29 @@
       "static/chunks/main-app.js",
       "static/chunks/app/register/page.js"
     ],
+=======
+>>>>>>> ccb9353 (Update the plan page and fix reward issue)
     "/tasks/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/tasks/page.js"
     ],
+<<<<<<< HEAD
     "/profile/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/profile/page.js"
+=======
+    "/register/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/register/page.js"
+    ],
+    "/deposit/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/deposit/page.js"
+>>>>>>> ccb9353 (Update the plan page and fix reward issue)
     ]
   }
 }
