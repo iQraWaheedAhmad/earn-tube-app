@@ -2,7 +2,7 @@
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
 import { Navigation } from "@/components/Navigation";
-
+// the plan has been changes 
 const plans = [
   { priceUSD: 15, profitUSD: 1, referralProfitUSD: 3 },
   { priceUSD: 25, profitUSD: 1.5, referralProfitUSD: 4 },
