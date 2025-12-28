@@ -41,7 +41,9 @@ export default function PlansPage() {
                 <p className="text-lg text-primary font-semibold mt-4">
                   Daily Profit: ${plan.profitUSD}
                 </p>
-
+                <p className="text-sm text-green-600 font-semibold mt-2">
+                  Referral Profit: ${plan.referralProfitUSD}
+                </p>
                 <Link
                   href="/staking"
                   className="mt-4 w-full bg-primary text-primary-foreground font-semibold py-2.5 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center"
